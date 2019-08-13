@@ -1,12 +1,14 @@
 const fetch = require('node-fetch');
 const mongo = require('mongodb').MongoClient;
 const telebot = require('telebot');
+const schedule = require('node-schedule');
+const moment = require('moment');
 const bot = new telebot('833125322:AAEDHTatf5jdz8X1WV8SSBrX1mpHM5M5IV8');
 
 async function initDB() {
-    const host = process.env.MONGO_URL || 'mongodb://localhost:27017';
+    const host = process.env.MONGO_URL || 'mongodb://host.docker.internal:27017';
 
-    const client = await mongo.connect(host);
+    const client = await mongo.connect(host, { useNewUrlParser: true });
     const dbName = 'work_mma_alarm';
     const db = client.db(dbName);
 
@@ -22,10 +24,9 @@ async function main() {
         const { db, closeDb } = await initDB();
         const collection = db.collection('newDocumentCounts');
         const count = await getCurrentNewDocumentCount();
-        console.log('Current New Document Count: ', count);
+        console.log('\t\t * Current New Document Count: ', count);
         const isNew = await isNewDocumentCountChanged(collection, count);
         await insertNewDocument(collection, count);
-        console.log(isNew);
 
         if (isNew) {
             await onChanged()
@@ -33,8 +34,6 @@ async function main() {
         closeDb();
     } catch (e) {
         onError(e)
-    } finally {
-        process.exit(0);
     }
 }
 
@@ -67,7 +66,7 @@ async function getCurrentNewDocumentCount() {
 
 async function isNewDocumentCountChanged(collection, count) {
     const last = await collection.find({}).sort({ created_at: -1 }).limit(1).toArray();
-    console.log("Last New Document Count: ", last[0].count);
+    console.log("\t\t * Last New Document Count: ", last[0].count, "\n\n");
     return last[0].count < count;
 }
 
@@ -84,4 +83,8 @@ function onError(e) {
     console.error(e, new Date());
 }
 
-main();
+schedule.scheduleJob("0 */3 * * * *", () => {
+    console.log(`\n\n\t\t * Triggered ${moment().utcOffset(9).toISOString(true)}\n`);
+    main()
+});
+console.log(" * Schedule Job Registered");
