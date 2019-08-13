@@ -1,5 +1,5 @@
 version: "3.4"
 services:
   alarm:
-    image: mma-work-new-alarm
+    image: mma-work-new-alarm:latest
     restart: always
