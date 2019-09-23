@@ -83,7 +83,7 @@ function onError(e) {
     console.error(e, new Date());
 }
 
-schedule.scheduleJob("0 0 */1 * * *", () => {
+schedule.scheduleJob("0 30 */1 * * *", () => {
     console.log(`\n\n\t\t * Triggered ${moment().utcOffset(9).toISOString(true)}\n`);
     main()
 });
