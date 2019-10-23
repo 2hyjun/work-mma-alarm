@@ -4,6 +4,9 @@
   "main": "index.js",
   "author": "2hyjun <biper94@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "trigger": "node trigger.js"
+  },
   "dependencies": {
     "axios": "^0.19.0",
     "moment": "^2.24.0",

@@ -3,7 +3,7 @@ const mongo = require('mongodb').MongoClient;
 const telebot = require('telebot');
 const schedule = require('node-schedule');
 const moment = require('moment');
-const bot = new telebot('833125322:AAEDHTatf5jdz8X1WV8SSBrX1mpHM5M5IV8');
+// const bot = new telebot('833125322:AAEDHTatf5jdz8X1WV8SSBrX1mpHM5M5IV8');
 
 async function initDB() {
     const host = process.env.MONGO_URL || 'mongodb://host.docker.internal:27017';
@@ -75,7 +75,20 @@ async function insertNewDocument(collection, count) {
 }
 
 async function onChanged() {
-    return bot.sendMessage("-281208246", "[병역일터] 새로운 공지사항이 있습니다.\nhttps://work.mma.go.kr/");
+	const url = "https://hooks.slack.com/services/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";
+	const options = {
+      headers: {
+          "Content-Type": "application/json"
+      },
+      method: "POST",
+		body: JSON.stringify({
+			text: "[병역일터] 새로운 공지사항이 있습니다.\nhttps://work.mma.go.kr/caisBYIS/board/boardList.do?menu_id=m_m8_6&tmpl_id=1&gesipan_gbcd=13"
+		}),
+	};
+
+	const res = await fetch(url, options);
+	return res;
+    // return bot.sendMessage("-281208246", "[병역일터] 새로운 공지사항이 있습니다.\nhttps://work.mma.go.kr/");
 }
 
 
@@ -88,3 +101,5 @@ schedule.scheduleJob("0 30 */1 * * *", () => {
     main()
 });
 console.log(" * Schedule Job Registered");
+
+module.exports = main;
