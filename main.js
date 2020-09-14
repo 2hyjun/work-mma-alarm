@@ -66,6 +66,7 @@ async function getCurrentNewDocumentCount() {
 
 async function isNewDocumentCountChanged(collection, count) {
     const last = await collection.find({}).sort({ created_at: -1 }).limit(1).toArray();
+    if (!last[0]) return true
     console.log("\t\t * Last New Document Count: ", last[0].count, "\n\n");
     return last[0].count < count;
 }
