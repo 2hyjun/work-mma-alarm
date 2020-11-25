@@ -76,7 +76,7 @@ async function insertNewDocument(collection, count) {
 }
 
 async function onChanged() {
-	const url = "https://hooks.slack.com/services/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";
+	const url = "https://hooks.slack.com/services/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";
 	const options = {
       headers: {
           "Content-Type": "application/json"
