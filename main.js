@@ -1,9 +1,9 @@
 const fetch = require('node-fetch');
 const mongo = require('mongodb').MongoClient;
-const telebot = require('telebot');
 const schedule = require('node-schedule');
 const moment = require('moment');
-// const bot = new telebot('833125322:AAEDHTatf5jdz8X1WV8SSBrX1mpHM5M5IV8');
+
+const slackUrl = process.env.MMA_SLACK_URL;
 
 async function initDB() {
     const host = process.env.MONGO_URL || 'mongodb://host.docker.internal:27017';
@@ -76,7 +76,7 @@ async function insertNewDocument(collection, count) {
 }
 
 async function onChanged() {
-	const url = "https://hooks.slack.com/services/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";
+	const url = slackUrl;
 	const options = {
       headers: {
           "Content-Type": "application/json"
@@ -87,20 +87,21 @@ async function onChanged() {
 		}),
 	};
 
-	const res = await fetch(url, options);
-	return res;
-    // return bot.sendMessage("-281208246", "[병역일터] 새로운 공지사항이 있습니다.\nhttps://work.mma.go.kr/");
+	return await fetch(url, options);
 }
-
 
 function onError(e) {
     console.error(e, new Date());
 }
 
-schedule.scheduleJob("0 30 */1 * * *", () => {
-    console.log(`\n\n\t\t * Triggered ${moment().utcOffset(9).toISOString(true)}\n`);
-    main()
-});
-console.log(" * Schedule Job Registered");
+if (slackUrl) {
+    schedule.scheduleJob("0 30 */1 * * *", () => {
+        console.log(`\n\n\t\t * Triggered ${moment().utcOffset(9).toISOString(true)}\n`);
+        main()
+    });
+    console.log(" * Schedule Job Registered. Slack Url: " + slackUrl);
+} else {
+    console.log("Slack Url is not defined!")
+}
 
 module.exports = main;

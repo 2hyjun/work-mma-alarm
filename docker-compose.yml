@@ -3,3 +3,5 @@ services:
   alarm:
     image: mma-work-new-alarm:latest
     restart: always
+    environment:
+        - MMA_SLACK_URL=${MMA_SLACK_URL}
